@@ -1,0 +1,33 @@
+# Environment variables (contains secrets)
+.env
+.env.local
+.env.*.local
+
+# Node modules
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Database
+*.sql.bak
+.pgpass
+
+# Build outputs
+dist/
+build/
+.next/
+
+# Logs
+logs/
+*.log
