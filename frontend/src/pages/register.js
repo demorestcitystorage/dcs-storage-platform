@@ -1,8 +1,7 @@
-// Cache bust - fresh build
-import { useState } from 'react';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
+import config from '../../config';
 import styles from '../styles/register.module.css';
 
 export default function Register() {
@@ -46,7 +45,7 @@ export default function Register() {
     }
 
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/register', {
+      const response = await axios.post(`${config.apiUrl}/api/auth/register`, {
         first_name: formData.first_name,
         last_name: formData.last_name,
         email: formData.email,

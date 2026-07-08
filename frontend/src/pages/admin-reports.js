@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
+import config from '../../config';
 import styles from '../styles/AdminReports.module.css';
 
 export default function AdminReports() {
@@ -31,7 +32,7 @@ export default function AdminReports() {
 
   const fetchFacilities = async (token) => {
     try {
-      const response = await axios.get('http://localhost:5000/api/admin/facilities', {
+      const response = await axios.get(`${config.apiUrl}/api/admin/facilities`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setFacilities(response.data);
@@ -46,12 +47,12 @@ export default function AdminReports() {
   const fetchReports = async (token) => {
     setLoading(true);
     try {
-      const pastDueResponse = await axios.get('http://localhost:5000/api/admin/reports/past-due', {
+      const pastDueResponse = await axios.get(`${config.apiUrl}/api/admin/reports/past-due`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setPastDue(pastDueResponse.data);
 
-      const revenueResponse = await axios.get('http://localhost:5000/api/admin/reports/revenue', {
+      const revenueResponse = await axios.get(`${config.apiUrl}/api/admin/reports/revenue`, {
         params: { facilityId: selectedFacility, month: selectedMonth, year: selectedYear },
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -82,8 +83,6 @@ export default function AdminReports() {
     { value: 11, label: 'November' },
     { value: 12, label: 'December' }
   ];
-
-  const currentFacility = facilities.find(f => f.id === selectedFacility);
 
   return (
     <div className={styles.container}>

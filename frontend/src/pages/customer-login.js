@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
+import config from '../../config';
 import styles from '../styles/CustomerLogin.module.css';
 
 export default function CustomerLogin() {
@@ -16,7 +17,7 @@ export default function CustomerLogin() {
     setError('');
 
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/login', {
+      const response = await axios.post(`${config.apiUrl}/api/auth/login`, {
         email,
         password
       });

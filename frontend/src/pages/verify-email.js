@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
-import styles from '../styles/verifyEmail.module.css';
+import config from '../../config';
+import styles from '../styles/verifyemail.module.css';
 
 export default function VerifyEmail() {
   const router = useRouter();
@@ -18,7 +19,7 @@ export default function VerifyEmail() {
 
   const verifyEmail = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/verify-email', {
+      const response = await axios.post(`${config.apiUrl}/api/auth/verify-email`, {
         token,
         customerId
       });

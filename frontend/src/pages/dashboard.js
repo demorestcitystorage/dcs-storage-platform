@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
+import config from '../../config';
 import styles from '../styles/Dashboard.module.css';
 
 export default function Dashboard() {
@@ -29,7 +30,7 @@ export default function Dashboard() {
 
   const fetchFacilities = async (token) => {
     try {
-      const response = await axios.get('http://localhost:5000/api/admin/facilities', {
+      const response = await axios.get(`${config.apiUrl}/api/admin/facilities`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setFacilities(response.data);
@@ -46,7 +47,7 @@ export default function Dashboard() {
     setLoading(true);
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/admin/facilities/${facilityId}/units`,
+        `${config.apiUrl}/api/admin/facilities/${facilityId}/units`,
         {
           headers: { Authorization: `Bearer ${token}` }
         }

@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
+import config from '../../config';
 import styles from '../styles/CustomerPortal.module.css';
- 
+
 export default function CustomerPortal() {
   const router = useRouter();
   const [customer, setCustomer] = useState(null);
@@ -10,7 +11,7 @@ export default function CustomerPortal() {
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showPaymentForm, setShowPaymentForm] = useState(false);
- 
+
   useEffect(() => {
     const token = localStorage.getItem('customerToken');
     const customerData = localStorage.getItem('customer');
@@ -19,17 +20,17 @@ export default function CustomerPortal() {
       router.push('/customer-login');
       return;
     }
- 
+
     if (customerData) {
       setCustomer(JSON.parse(customerData));
       fetchRentalAndInvoices(token, JSON.parse(customerData).id);
     }
   }, []);
- 
+
   const fetchRentalAndInvoices = async (token, customerId) => {
     try {
       const rentalResponse = await axios.get(
-        `http://localhost:5000/api/customer/rental/${customerId}`,
+        `${config.apiUrl}/api/customer/rental/${customerId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       
@@ -41,26 +42,26 @@ export default function CustomerPortal() {
       setLoading(false);
     }
   };
- 
+
   const handleLogout = () => {
     localStorage.removeItem('customerToken');
     localStorage.removeItem('customer');
     router.push('/customer-login');
   };
- 
+
   if (loading) {
     return <div className={styles.loading}>Loading...</div>;
   }
- 
+
   const currentInvoice = invoices.length > 0 ? invoices[0] : null;
- 
+
   return (
     <div className={styles.container}>
       <header className={styles.header}>
         <h1>Your Storage Account</h1>
         <button onClick={handleLogout} className={styles.logoutBtn}>Logout</button>
       </header>
- 
+
       <div className={styles.content}>
         <div className={styles.card}>
           <h2>Unit Information</h2>
@@ -83,7 +84,7 @@ export default function CustomerPortal() {
             <p>No active rental found</p>
           )}
         </div>
- 
+
         <div className={styles.card}>
           <h2>Next Payment Due</h2>
           {currentInvoice ? (
@@ -118,7 +119,7 @@ export default function CustomerPortal() {
             <p>No invoices found</p>
           )}
         </div>
- 
+
         {showPaymentForm && currentInvoice && (
           <PaymentForm 
             invoiceId={currentInvoice.id}
@@ -131,7 +132,7 @@ export default function CustomerPortal() {
             }}
           />
         )}
- 
+
         <div className={styles.card}>
           <h2>Payment History</h2>
           {invoices.length > 0 ? (
@@ -163,22 +164,22 @@ export default function CustomerPortal() {
     </div>
   );
 }
- 
+
 function PaymentForm({ invoiceId, amount, token, styles, onPaymentSuccess }) {
   const [cardNumber, setCardNumber] = useState('');
   const [cardExpiry, setCardExpiry] = useState('');
   const [cardCvc, setCardCvc] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
- 
+
   const handlePayment = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
- 
+
     try {
       await axios.post(
-        'http://localhost:5000/api/customer/pay',
+        `${config.apiUrl}/api/customer/pay`,
         {
           invoiceId,
           amount,
@@ -186,7 +187,7 @@ function PaymentForm({ invoiceId, amount, token, styles, onPaymentSuccess }) {
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
- 
+
       alert('Payment successful!');
       onPaymentSuccess();
     } catch (err) {
@@ -195,7 +196,7 @@ function PaymentForm({ invoiceId, amount, token, styles, onPaymentSuccess }) {
       setLoading(false);
     }
   };
- 
+
   return (
     <div className={styles.card}>
       <h2>Make Payment</h2>
@@ -210,7 +211,7 @@ function PaymentForm({ invoiceId, amount, token, styles, onPaymentSuccess }) {
             required
           />
         </div>
- 
+
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
           <div className={styles.formGroup}>
             <label>Expiry (MM/YY)</label>
@@ -222,7 +223,7 @@ function PaymentForm({ invoiceId, amount, token, styles, onPaymentSuccess }) {
               required
             />
           </div>
- 
+
           <div className={styles.formGroup}>
             <label>CVC</label>
             <input
@@ -234,13 +235,13 @@ function PaymentForm({ invoiceId, amount, token, styles, onPaymentSuccess }) {
             />
           </div>
         </div>
- 
+
         {error && <div className={styles.error}>{error}</div>}
- 
+
         <div className={styles.paymentAmount}>
           Amount: ${Number(amount).toFixed(2)}
         </div>
- 
+
         <button type="submit" disabled={loading} className={styles.payBtn}>
           {loading ? 'Processing...' : 'Complete Payment'}
         </button>
